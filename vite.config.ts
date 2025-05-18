@@ -74,8 +74,21 @@ const gitInfo = getGitInfo();
 export default defineConfig((config) => {
   return {
     server: {
-      host: true,
-      allowedHosts: 'all',
+      host: '0.0.0.0', // Dış dünyadan erişimi aç
+      port: 5173, // Traefik yönlendirmesi için doğru portu kullan
+      strictPort: true,
+      allowedHosts: [
+        "all", // Tüm domainlere izin ver
+        "localhost",
+        "*.traefik.me", // Traefik’in rastgele oluşturduğu alan adlarına izin ver
+        "editor.turnuvam.net" // Özel alan adını açıkça belirt
+      ],
+      cors: true, // CORS sorunlarını önlemek için
+      hmr: {
+        protocol: 'wss', // Hot Module Reload için WebSocket protokolünü kullan
+        host: process.env.VITE_HMR_HOST || 'editor.turnuvam.net',
+        port: 5173,
+      },
     },
     define: {
       __COMMIT_HASH: JSON.stringify(gitInfo.commitHash),
